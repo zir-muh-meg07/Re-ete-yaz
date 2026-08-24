@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f2f2f7">
+<title>Tarımsal Reçete V6</title>
+<link rel="manifest" href="manifest.json">
+<style>
+:root{
+  --bg:#f2f2f7;--card:#fff;--text:#111;--muted:#6e6e73;--line:#d1d1d6;
+  --accent:#2e7d32;--danger:#c62828;--soft:#eef6ee;--radius:20px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Arial,sans-serif;color:var(--text)}
+body{min-height:100vh}
+.app{max-width:620px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 12px calc(104px + env(safe-area-inset-bottom))}
+.header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+h1{margin:0;font-size:29px;line-height:1.02;letter-spacing:-.7px}
+.date{font-size:13px;color:var(--muted);margin-top:5px}
+.header-actions{display:flex;gap:7px}
+.topbtn{border:0;background:#fff;border-radius:14px;padding:11px 12px;font-weight:800;font-size:14px}
+.card{background:var(--card);border-radius:var(--radius);padding:14px;margin:11px 0;box-shadow:0 1px 0 rgba(0,0,0,.04)}
+.product-quick{border:2px solid #dcebdc}
+.manage-main{width:100%;border:0;border-radius:15px;background:var(--accent);color:#fff;padding:15px 12px;font-size:17px;font-weight:900;margin:8px 0 10px}
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.quickbtn{border:1px solid #d5e4d5;border-radius:13px;background:var(--soft);color:var(--accent);padding:12px 10px;font-size:14px;font-weight:850}
+.counts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.counts span{background:#f4f4f7;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:800;color:var(--muted)}
+.section-title{font-size:18px;font-weight:850;margin:0 0 4px}
+.section-sub{font-size:12px;color:var(--muted);margin-bottom:12px}
+label{display:block;font-size:13px;font-weight:750;color:var(--muted);margin-bottom:7px}
+input,textarea{
+  width:100%;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--text);
+  font:inherit;font-size:17px;padding:14px 13px;outline:none;
+}
+textarea{min-height:95px;resize:vertical;line-height:1.35}
+input:focus,textarea:focus{border-color:#84b686;box-shadow:0 0 0 3px rgba(46,125,50,.10)}
+.customer input{font-size:18px;font-weight:700}
+.item-row{
+  display:grid;grid-template-columns:34px minmax(0,1.55fr) minmax(105px,.85fr);
+  gap:8px;align-items:center;margin-bottom:9px
+}
+.num{height:34px;border-radius:11px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-weight:850;color:var(--accent)}
+.pickbtn{
+  width:100%;min-height:52px;border:1px solid var(--line);border-radius:14px;background:#fff;
+  padding:13px 12px;text-align:left;font:inherit;font-size:16px;color:#111;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+.pickbtn.placeholder{color:#8e8e93}
+.chev{font-size:16px;color:#8e8e93}
+.item-row input{min-height:52px}
+.manual{border-top:1px solid #ececf0;margin-top:12px;padding-top:12px}
+.wait{display:grid;grid-template-columns:1fr 76px;gap:10px;align-items:end;margin-top:12px}
+.wait .unit{padding-bottom:15px;color:var(--muted);font-weight:800}
+.small-actions{display:flex;gap:8px;margin-top:12px}
+.smallbtn{border:0;border-radius:12px;padding:11px 12px;font-weight:800;background:#f1f1f5}.smallbtn.green{background:var(--soft);color:var(--accent)}
+.smallbtn.danger{color:var(--danger);background:#fff0f0}
+.panel{display:none}.panel.show{display:block}
+.segment{display:grid;grid-template-columns:1fr 1fr;background:#e9e9ee;border-radius:13px;padding:3px;margin:10px 0 12px}
+.segment button{border:0;background:transparent;border-radius:10px;padding:10px;font-weight:800}
+.segment .active{background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.addrow{display:grid;grid-template-columns:1fr auto;gap:8px}
+.addbtn{border:0;border-radius:12px;background:var(--accent);color:#fff;padding:0 16px;font-weight:850}
+.product-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 2px;border-bottom:1px solid #efeff4}
+.del{border:0;border-radius:10px;background:#fff0f0;color:var(--danger);padding:8px 10px;font-weight:800}
+.history-item{border:1px solid #e5e5ea;border-radius:14px;padding:12px;margin:9px 0}
+.history-head{display:flex;justify-content:space-between;gap:10px}
+.history-name{font-weight:850}.history-date{font-size:12px;color:var(--muted)}
+.history-actions{display:flex;gap:8px;margin-top:9px}
+.mini{border:0;border-radius:10px;padding:9px 11px;font-weight:800;background:var(--soft);color:var(--accent)}
+.mini.delete{background:#fff0f0;color:var(--danger)}
+.empty{color:var(--muted);font-size:14px;padding:8px 0}.notice{font-size:12px;color:var(--muted);background:#f6f6f8;border-radius:12px;padding:10px;margin-top:10px}
+.bottom{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;
+  background:rgba(242,242,247,.94);backdrop-filter:blur(18px);
+  border-top:1px solid rgba(0,0,0,.08);
+  padding:10px 12px calc(10px + env(safe-area-inset-bottom))
+}
+.bottom-inner{max-width:620px;margin:0 auto;display:grid;grid-template-columns:1fr 1.2fr;gap:10px}
+.save,.print{border:0;border-radius:15px;padding:16px 12px;font-size:17px;font-weight:900}
+.save{background:#fff;color:var(--accent);border:1px solid #cfd8cf}.print{background:var(--accent);color:#fff}
+
+/* Search sheet */
+.sheet-backdrop{
+  position:fixed;inset:0;background:rgba(0,0,0,.28);display:none;z-index:90;
+}
+.sheet-backdrop.show{display:block}
+.sheet{
+  position:absolute;left:0;right:0;bottom:0;background:#f9f9fb;
+  border-radius:22px 22px 0 0;max-height:78vh;padding:12px 12px calc(12px + env(safe-area-inset-bottom));
+  box-shadow:0 -10px 40px rgba(0,0,0,.18);
+}
+.sheet-handle{width:42px;height:5px;border-radius:99px;background:#c7c7cc;margin:0 auto 12px}
+.sheet-title{font-size:20px;font-weight:850;margin:0 0 10px}
+.sheet-search{position:sticky;top:0;background:#f9f9fb;padding-bottom:8px}
+.sheet-list{overflow:auto;max-height:55vh}
+.sheet-item{
+  width:100%;border:0;background:#fff;text-align:left;padding:14px 12px;font-size:17px;
+  border-bottom:1px solid #efeff4
+}
+.sheet-item:first-child{border-radius:14px 14px 0 0}
+.sheet-item:last-child{border-radius:0 0 14px 14px;border-bottom:0}
+.sheet-empty{padding:18px 8px;color:var(--muted);text-align:center}
+.sheet-cancel{width:100%;margin-top:10px;border:0;border-radius:14px;background:#fff;padding:14px;font-size:17px;font-weight:800;color:var(--accent)}
+
+.print-only{display:none}
+@media (max-width:430px){
+  .item-row{grid-template-columns:32px minmax(0,1fr)}
+  .item-row input{grid-column:2}
+}
+@media print{
+  @page{size:80mm auto;margin:5mm}
+  body{background:#fff}.app,.bottom,.sheet-backdrop{display:none!important}
+  .print-only{display:block!important;width:70mm;margin:0 auto;font-family:Arial,sans-serif;color:#000}
+  .print-only h2{text-align:center;margin:0 0 5px;font-size:18px}
+  .print-only .pdate{text-align:center;font-size:10.5px;margin-bottom:8px}
+  .print-only .block{margin:9px 0}
+  .print-only .label{font-size:11px;font-weight:700;text-transform:uppercase;margin-bottom:4px}
+  .print-only .value{font-size:12.5px;white-space:pre-wrap;line-height:1.35}
+  .print-only hr{border:0;border-top:1px dashed #000;margin:8px 0}
+}
+</style>
+</head>
+<body>
+<main class="app">
+  <div class="header">
+    <div>
+      <h1>Tarımsal Reçete</h1>
+      <div class="date" id="today"></div>
+    </div>
+    <div class="header-actions">
+      <button class="topbtn" id="productsBtn">Ürünler</button>
+      <button class="topbtn" id="historyBtn">Geçmiş</button>
+    </div>
+  </div>
+
+  <section class="card product-quick">
+    <div class="section-title">Ürünleri Yönet</div>
+    <div class="section-sub">Ürün ekleme, toplu yükleme ve yedekleme işlemleri burada.</div>
+    <button class="manage-main" id="manageProductsMain">ÜRÜNLERİ YÖNET</button>
+    <div class="quick-grid">
+      <button class="quickbtn" id="quickFert">Gübre Ekle</button>
+      <button class="quickbtn" id="quickSpray">İlaç Ekle</button>
+      <button class="quickbtn" id="quickBulk">Toplu Ürün Ekle</button>
+      <button class="quickbtn" id="quickBackup">Ürünleri Yedekle</button>
+    </div>
+    <div class="counts">
+      <span id="fertCount">0 gübre</span>
+      <span id="sprayCount">0 ilaç</span>
+    </div>
+  </section>
+
+  <section class="card customer">
+    <label>Müşteri adı</label>
+    <input id="customer" type="text" placeholder="Müşteri adını yaz">
+  </section>
+
+  <section class="card">
+    <div class="section-title">Gübreleme Reçetesi</div>
+    <div class="section-sub">Ürünü ara veya listeden seç; dozu kendin yaz.</div>
+    <div id="fertRows"></div>
+    <div class="manual">
+      <label>Manuel yaz</label>
+      <textarea id="fertManual" placeholder="Listede olmayan ürün veya ek bilgi..."></textarea>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="section-title">İlaçlama Reçetesi</div>
+    <div class="section-sub">Ürünü ara veya listeden seç; dozu kendin yaz.</div>
+    <div id="sprayRows"></div>
+    <div class="manual">
+      <label>Manuel yaz</label>
+      <textarea id="sprayManual" placeholder="Listede olmayan ürün veya ek bilgi..."></textarea>
+    </div>
+    <div class="wait">
+      <div>
+        <label>Bekleme süresi</label>
+        <input id="wait" type="number" min="0" inputmode="numeric" placeholder="7">
+      </div>
+      <div class="unit">gün</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="section-title">Genel Notlar</div>
+    <textarea id="notes" placeholder="Genel notları yaz..."></textarea>
+    <div class="small-actions">
+      <button class="smallbtn danger" id="clearBtn">Formu Temizle</button>
+    </div>
+  </section>
+
+  <section class="card panel" id="productsPanel">
+    <div class="section-title">Ürünleri Yönet</div>
+    <div class="section-sub">Eklediğin ürünler arama ve seçim listelerinde görünür.</div>
+    <div class="segment">
+      <button id="tabFert" class="active">Gübreler</button>
+      <button id="tabSpray">İlaçlar</button>
+    </div>
+    <div class="addrow">
+      <input id="newProduct" type="text" placeholder="Yeni ürün adı">
+      <button class="addbtn" id="addProduct">Ekle</button>
+    </div>
+
+    <div class="manual">
+      <label>Toplu ürün ekle</label>
+      <textarea id="bulkProducts" placeholder="Her satıra bir ürün yaz:
+20-20-20
+Kalsiyum Nitrat
+Magnezyum Sülfat"></textarea>
+      <div class="small-actions">
+        <button class="smallbtn green" id="bulkAddBtn">Listeye Ekle</button>
+      </div>
+    </div>
+
+    <div class="small-actions">
+      <button class="smallbtn green" id="backupBtn">Ürünleri Yedekle</button>
+      <button class="smallbtn green" id="restoreBtn">Yedeği Geri Yükle</button>
+      <input id="restoreFile" type="file" accept=".json,application/json" style="display:none">
+    </div>
+
+    <div class="notice">Bu sürümden itibaren ürün kayıt alanı sabittir. Yeni sürümlerde aynı kayıt alanı kullanılacaktır.</div>
+
+    <div id="productList" style="margin-top:10px"></div>
+  </section>
+
+  <section class="card panel" id="historyPanel">
+    <div class="section-title">Kayıtlı Reçeteler</div>
+    <div id="historyList"></div>
+  </section>
+</main>
+
+<div class="bottom">
+  <div class="bottom-inner">
+    <button class="save" id="saveBtn">Kaydet</button>
+    <button class="print" id="printBtn">Yazdır</button>
+  </div>
+</div>
+
+<div class="sheet-backdrop" id="sheetBackdrop">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="sheetTitle">Ürün Seç</div>
+    <div class="sheet-search">
+      <input id="productSearch" type="search" placeholder="Ürün ara...">
+    </div>
+    <div class="sheet-list" id="sheetList"></div>
+    <button class="sheet-cancel" id="sheetCancel">Vazgeç</button>
+  </div>
+</div>
+
+<div class="print-only">
+  <h2>TARIMSAL REÇETE</h2>
+  <div class="pdate" id="pDate"></div>
+  <hr>
+  <div class="block"><div class="label">Müşteri</div><div class="value" id="pCustomer"></div></div>
+  <div class="block"><div class="label">Gübreleme Reçetesi</div><div class="value" id="pFert"></div></div>
+  <div class="block"><div class="label">İlaçlama Reçetesi</div><div class="value" id="pSpray"></div></div>
+  <div class="block"><div class="label">Bekleme Süresi</div><div class="value" id="pWait"></div></div>
+  <div class="block"><div class="label">Genel Notlar</div><div class="value" id="pNotes"></div></div>
+  <hr>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const PROD_KEY="tarimsal_recete_products";
+  const REC_KEY="tarimsal_recete_records";
+  const OLD_PROD_KEYS=["tarimsal_urunler_v4","tarimsal_urunler_v3","tarimsal_urunler_v2"];
+  const OLD_REC_KEYS=["tarimsal_receteler_v4","tarimsal_receteler_v3","tarimsal_receteler_v2","tarimsal_receteler_v1"];
+  const defaults={fertilizer:[],spray:[]};
+
+  function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));}
+  function uniq(a){return [...new Set((a||[]).map(x=>String(x).trim()).filter(Boolean))];}
+  function validProducts(x){return x&&Array.isArray(x.fertilizer)&&Array.isArray(x.spray);}
+
+  function readProducts(){
+    try{
+      const current=JSON.parse(localStorage.getItem(PROD_KEY)||"null");
+      if(validProducts(current)) return {fertilizer:uniq(current.fertilizer),spray:uniq(current.spray)};
+    }catch(e){}
+    let merged={fertilizer:[],spray:[]};
+    for(const key of OLD_PROD_KEYS){
+      try{
+        const x=JSON.parse(localStorage.getItem(key)||"null");
+        if(validProducts(x)){merged.fertilizer.push(...x.fertilizer);merged.spray.push(...x.spray);}
+      }catch(e){}
+    }
+    merged={fertilizer:uniq(merged.fertilizer),spray:uniq(merged.spray)};
+    localStorage.setItem(PROD_KEY,JSON.stringify(merged));
+    return merged;
+  }
+
+  function migrateRecords(){
+    try{
+      const current=JSON.parse(localStorage.getItem(REC_KEY)||"null");
+      if(Array.isArray(current)) return;
+    }catch(e){}
+    for(const key of OLD_REC_KEYS){
+      try{
+        const x=JSON.parse(localStorage.getItem(key)||"null");
+        if(Array.isArray(x)){localStorage.setItem(REC_KEY,JSON.stringify(x));return;}
+      }catch(e){}
+    }
+    localStorage.setItem(REC_KEY,"[]");
+  }
+
+  function saveProducts(){localStorage.setItem(PROD_KEY,JSON.stringify(products));updateCounts()}
+  let products=readProducts();
+  migrateRecords();
+  $("today").textContent=new Date().toLocaleDateString("tr-TR",{day:"2-digit",month:"long",year:"numeric"});
+
+  const selected = {fert:Array(10).fill(""), spray:Array(10).fill("")};
+
+  function makeRows(container,prefix){
+    container.innerHTML=Array.from({length:10},(_,i)=>`
+      <div class="item-row">
+        <div class="num">${i+1}</div>
+        <button type="button" class="pickbtn placeholder" id="${prefix}Pick${i}">
+          <span id="${prefix}Label${i}">Ürün seç</span><span class="chev">⌄</span>
+        </button>
+        <input id="${prefix}Dose${i}" type="text" placeholder="Doz / miktar">
+      </div>`).join("");
+    for(let i=0;i<10;i++){
+      $(`${prefix}Pick${i}`).onclick=()=>openPicker(prefix,i);
+    }
+  }
+  makeRows($("fertRows"),"fert"); makeRows($("sprayRows"),"spray");
+
+  let pickerPrefix=null,pickerIndex=null;
+  function openPicker(prefix,index){
+    pickerPrefix=prefix;pickerIndex=index;
+    $("sheetTitle").textContent=prefix==="fert"?"Gübre Seç":"İlaç Seç";
+    $("productSearch").value="";
+    renderSheet();
+    $("sheetBackdrop").classList.add("show");
+    setTimeout(()=>$("productSearch").focus(),150);
+  }
+  function closePicker(){
+    $("sheetBackdrop").classList.remove("show");
+    pickerPrefix=null;pickerIndex=null;
+  }
+  function renderSheet(){
+    const cat=pickerPrefix==="fert"?"fertilizer":"spray";
+    const q=$("productSearch").value.trim().toLocaleLowerCase("tr-TR");
+    const items=products[cat].filter(x=>x.toLocaleLowerCase("tr-TR").includes(q));
+    const list=$("sheetList");
+    if(!items.length){
+      list.innerHTML='<div class="sheet-empty">Eşleşen ürün yok.</div>';
+      return;
+    }
+    list.innerHTML="";
+    items.forEach(name=>{
+      const b=document.createElement("button");
+      b.className="sheet-item";
+      b.textContent=name;
+      b.onclick=()=>{
+        selected[pickerPrefix][pickerIndex]=name;
+        const label=$(`${pickerPrefix}Label${pickerIndex}`);
+        const pick=$(`${pickerPrefix}Pick${pickerIndex}`);
+        label.textContent=name; pick.classList.remove("placeholder");
+        closePicker();
+      };
+      list.appendChild(b);
+    });
+  }
+  $("productSearch").oninput=renderSheet;
+  $("sheetCancel").onclick=closePicker;
+  $("sheetBackdrop").onclick=e=>{if(e.target===$("sheetBackdrop"))closePicker()};
+
+  let category="fertilizer";
+
+  function updateCounts(){
+    $("fertCount").textContent = products.fertilizer.length + " gübre";
+    $("sprayCount").textContent = products.spray.length + " ilaç";
+  }
+
+  function openProductsPanel(target="fertilizer", focusMode="single"){
+    category=target;
+    $("productsPanel").classList.add("show");
+    $("historyPanel").classList.remove("show");
+    $("tabFert").classList.toggle("active",target==="fertilizer");
+    $("tabSpray").classList.toggle("active",target==="spray");
+    renderProducts();
+    setTimeout(()=>{
+      $("productsPanel").scrollIntoView({behavior:"smooth",block:"start"});
+      if(focusMode==="single") $("newProduct").focus();
+      if(focusMode==="bulk") $("bulkProducts").focus();
+    },120);
+  }
+
+  function renderProducts(){
+    const list=$("productList"),items=products[category];
+    if(!items.length){list.innerHTML='<div class="empty">Henüz ürün eklenmedi.</div>';return;}
+    list.innerHTML="";
+    items.forEach((name,idx)=>{
+      const el=document.createElement("div");el.className="product-item";
+      el.innerHTML=`<div>${esc(name)}</div><button class="del">Sil</button>`;
+      el.querySelector("button").onclick=()=>{
+        products[category].splice(idx,1);saveProducts();renderProducts();
+      };
+      list.appendChild(el);
+    });
+  }
+  $("tabFert").onclick=()=>{category="fertilizer";$("tabFert").classList.add("active");$("tabSpray").classList.remove("active");renderProducts()};
+  $("tabSpray").onclick=()=>{category="spray";$("tabSpray").classList.add("active");$("tabFert").classList.remove("active");renderProducts()};
+  $("addProduct").onclick=()=>{
+    const v=$("newProduct").value.trim(); if(!v)return;
+    products[category]=uniq([...products[category],v]);
+    saveProducts();$("newProduct").value="";renderProducts();
+  };
+
+  $("bulkAddBtn").onclick=()=>{
+    const items=$("bulkProducts").value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+    if(!items.length){alert("Her satıra bir ürün adı yazın.");return;}
+    products[category]=uniq([...products[category],...items]);
+    saveProducts();$("bulkProducts").value="";renderProducts();
+    alert("Ürünler listeye eklendi.");
+  };
+
+  $("backupBtn").onclick=()=>{
+    const data={app:"Tarimsal Recete",version:5,exportedAt:new Date().toISOString(),products};
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;
+    a.download="tarimsal-recete-urun-yedegi-"+new Date().toISOString().slice(0,10)+".json";
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  };
+
+  $("restoreBtn").onclick=()=>$("restoreFile").click();
+  $("restoreFile").onchange=async(e)=>{
+    const file=e.target.files?.[0]; if(!file)return;
+    try{
+      const data=JSON.parse(await file.text());
+      const p=data.products||data;
+      if(!validProducts(p)) throw new Error();
+      products={
+        fertilizer:uniq([...products.fertilizer,...p.fertilizer]),
+        spray:uniq([...products.spray,...p.spray])
+      };
+      saveProducts();renderProducts();
+      alert("Ürün yedeği geri yüklendi.");
+    }catch(err){alert("Bu dosya geçerli bir ürün yedeği değil.");}
+    e.target.value="";
+  };
+
+  $("manageProductsMain").onclick=()=>openProductsPanel("fertilizer","none");
+  $("quickFert").onclick=()=>openProductsPanel("fertilizer","single");
+  $("quickSpray").onclick=()=>openProductsPanel("spray","single");
+  $("quickBulk").onclick=()=>openProductsPanel(category || "fertilizer","bulk");
+  $("quickBackup").onclick=()=>$("backupBtn").click();
+
+  function togglePanel(which){
+    const p=$("productsPanel"),h=$("historyPanel");
+    if(which==="products"){p.classList.toggle("show");h.classList.remove("show");renderProducts();if(p.classList.contains("show"))setTimeout(()=>p.scrollIntoView({behavior:"smooth"}),50)}
+    else{h.classList.toggle("show");p.classList.remove("show");renderHistory();if(h.classList.contains("show"))setTimeout(()=>h.scrollIntoView({behavior:"smooth"}),50)}
+  }
+  $("productsBtn").onclick=()=>openProductsPanel("fertilizer","none");
+  $("historyBtn").onclick=()=>togglePanel("history");
+
+  function collect(prefix){
+    const a=[];
+    for(let i=0;i<10;i++){
+      const product=selected[prefix][i];
+      const dose=$(`${prefix}Dose${i}`).value.trim();
+      if(product||dose)a.push({product,dose});
+    }
+    return a;
+  }
+  function formData(){
+    return {
+      id:Date.now(),createdAt:new Date().toISOString(),
+      customer:$("customer").value.trim(),
+      fertilizer:collect("fert"),fertManual:$("fertManual").value.trim(),
+      spray:collect("spray"),sprayManual:$("sprayManual").value.trim(),
+      wait:$("wait").value.trim(),notes:$("notes").value.trim()
+    };
+  }
+  function readAll(){try{return JSON.parse(localStorage.getItem(REC_KEY)||"[]")}catch(e){return[]}}
+  function writeAll(x){localStorage.setItem(REC_KEY,JSON.stringify(x));renderHistory()}
+
+  function setPick(prefix,i,value){
+    selected[prefix][i]=value||"";
+    $(`${prefix}Label${i}`).textContent=value||"Ürün seç";
+    $(`${prefix}Pick${i}`).classList.toggle("placeholder",!value);
+  }
+
+  function clearForm(confirmFirst=true){
+    if(confirmFirst && !confirm("Formdaki bilgiler temizlensin mi?"))return;
+    $("customer").value="";$("fertManual").value="";$("sprayManual").value="";$("wait").value="";$("notes").value="";
+    for(let i=0;i<10;i++){
+      setPick("fert",i,"");setPick("spray",i,"");
+      $(`fertDose${i}`).value="";$(`sprayDose${i}`).value="";
+    }
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+  $("clearBtn").onclick=()=>clearForm(true);
+
+  $("saveBtn").onclick=()=>{
+    const r=formData();
+    if(!r.customer){alert("Müşteri adını yazın.");$("customer").focus();return;}
+    const all=readAll();all.unshift(r);writeAll(all.slice(0,500));alert("Reçete kaydedildi.");
+  };
+
+  function fillForm(r){
+    $("customer").value=r.customer||"";
+    for(let i=0;i<10;i++){
+      setPick("fert",i,r.fertilizer?.[i]?.product||"");
+      $(`fertDose${i}`).value=r.fertilizer?.[i]?.dose||"";
+      setPick("spray",i,r.spray?.[i]?.product||"");
+      $(`sprayDose${i}`).value=r.spray?.[i]?.dose||"";
+    }
+    $("fertManual").value=r.fertManual||"";$("sprayManual").value=r.sprayManual||"";
+    $("wait").value=r.wait||"";$("notes").value=r.notes||"";
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  function renderHistory(){
+    const list=$("historyList"),all=readAll();
+    if(!all.length){list.innerHTML='<div class="empty">Henüz kayıtlı reçete yok.</div>';return}
+    list.innerHTML="";
+    all.forEach(r=>{
+      const d=new Date(r.createdAt),el=document.createElement("div");el.className="history-item";
+      el.innerHTML=`<div class="history-head"><div class="history-name">${esc(r.customer||"İsimsiz")}</div>
+      <div class="history-date">${d.toLocaleDateString("tr-TR")} ${d.toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"})}</div></div>
+      <div class="history-actions"><button class="mini open">Aç</button><button class="mini delete">Sil</button></div>`;
+      el.querySelector(".open").onclick=()=>fillForm(r);
+      el.querySelector(".delete").onclick=()=>{if(confirm("Bu kayıt silinsin mi?"))writeAll(readAll().filter(x=>x.id!==r.id))};
+      list.appendChild(el);
+    });
+  }
+
+  function fmt(items,manual){
+    const lines=(items||[]).map((x,i)=>`${i+1}. ${x.product||"Ürün"}${x.dose?" — "+x.dose:""}`);
+    if(manual)lines.push(manual);
+    return lines.length?lines.join("\n"):"-";
+  }
+  $("printBtn").onclick=()=>{
+    const r=formData();
+    $("pDate").textContent=new Date().toLocaleString("tr-TR",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
+    $("pCustomer").textContent=r.customer||"-";
+    $("pFert").textContent=fmt(r.fertilizer,r.fertManual);
+    $("pSpray").textContent=fmt(r.spray,r.sprayManual);
+    $("pWait").textContent=r.wait?`${r.wait} gün`:"-";
+    $("pNotes").textContent=r.notes||"-";
+    window.print();
+  };
+
+  renderProducts(); renderHistory();
+  if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  }
+})();
+</script>
+</body>
+</html>
